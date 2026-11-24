@@ -1,0 +1,1 @@
+<?php get_header(); ?><main class="single" id="main"><?php while(have_posts()):the_post(); ?><h2><a href="<?php the_permalink(); ?>"><?php the_title(); ?></a></h2><?php the_excerpt(); ?><?php endwhile; ?><a class="btn" href="<?php echo esc_url(home_url('/')); ?>">Explore properties</a></main><?php get_footer(); ?>

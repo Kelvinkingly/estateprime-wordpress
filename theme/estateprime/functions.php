@@ -1,0 +1,10 @@
+<?php
+if(!defined('ABSPATH'))exit;
+add_action('after_setup_theme',function(){add_theme_support('title-tag');add_theme_support('post-thumbnails');});
+add_action('wp_enqueue_scripts',function(){wp_enqueue_style('estateprime',get_stylesheet_uri(),array(),'1.0');wp_enqueue_script('estateprime',get_template_directory_uri().'/app.js',array(),'1.0',true);});
+add_action('wp_head',function(){if(!has_site_icon())echo '<link rel="icon" type="image/svg+xml" href="'.esc_url(get_template_directory_uri().'/favicon.svg').'">';});
+function ep_asset($f){return esc_url(get_template_directory_uri().'/'.$f);}
+function ep_records(){return array(array('The Solstice Villa','A contemporary detached retreat with expansive living areas and outdoor entertaining.','Villa','West District',875000,4,3200,'property1.webp'),array('Skyline Apartment','Elevated city living with an open-plan layout and generous natural light.','Apartment','Central District',425000,2,1450,'property2.webp'),array('The Grove Townhouse','A refined modern townhouse with a garden and flexible family spaces.','Townhouse','North District',590000,3,2100,'property3.webp'),array('Coastal Penthouse','An elegant penthouse with panoramic views and generous terrace space.','Apartment','Coastal District',1200000,3,2850,'property4.webp'));}
+add_action('init',function(){register_post_type('ep_property',array('label'=>'Properties','public'=>true,'show_in_rest'=>true,'supports'=>array('title','editor','thumbnail','custom-fields'),'menu_icon'=>'dashicons-admin-home'));});
+add_action('after_switch_theme',function(){if(get_option('ep_seeded'))return;foreach(ep_records() as $r){$id=wp_insert_post(array('post_type'=>'ep_property','post_title'=>$r[0],'post_content'=>$r[1],'post_status'=>'publish'),true);if(!is_wp_error($id)){foreach(array('type','district','price','beds','area','photo') as $i=>$key)update_post_meta($id,'ep_'.$key,$r[$i+2]);}}update_option('ep_seeded',1);flush_rewrite_rules();});
+function ep_meta($key){return get_post_meta(get_the_ID(),'ep_'.$key,true);}
